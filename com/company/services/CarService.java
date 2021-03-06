@@ -34,5 +34,5 @@ public interface CarService {
 
     List<Car> getCarsByManufacturer(Manufacturer manufacturer);
 
-    List<Car> getCarsByPeriod(Period period, Integer year);
+    List<Car> getCarsByManufacturersYearFounded(Period period, Integer year, List<Manufacturer> manufacturer);
 }

@@ -65,12 +65,16 @@ public class CarServiceImpl implements CarService {
         switch (sortingOption) {
             case MODEL_ASC:
                 sortedCars.sort(Comparator.comparing(Car::getModel));
+                break;
             case MODEL_DESC:
-                sortedCars.sort((car1, car2) -> car2.getModel().compareTo(car1.getModel()));
+                sortedCars.sort(Comparator.comparing(Car::getModel).reversed());
+                break;
             case PRODUCTION_YEAR_ASC:
                 sortedCars.sort(Comparator.comparing(Car::getProductionYear));
+                break;
             case PRODUCTION_YEAR_DESC:
-                sortedCars.sort((car1, car2) -> car2.getProductionYear().compareTo(car1.getProductionYear()));
+                sortedCars.sort(Comparator.comparing(Car::getProductionYear).reversed());
+                break;
         }
 
         return sortedCars;
@@ -78,7 +82,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public boolean isCarSaved(Car car) {
-        return cars.stream().anyMatch(car::equals);
+        return cars.contains(car);
     }
 
     @Override
@@ -87,22 +91,42 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Car> getCarsByPeriod(Period period, Integer year) {
+    public List<Car> getCarsByManufacturersYearFounded(Period period, Integer year, List<Manufacturer> manufacturers) {
+        List<Car> result = new ArrayList<>();
+
         switch (period) {
             case BEFORE:
-                return cars.stream().filter(car -> car.getProductionYear() < year).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> manufacturer.getYear() < year).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
             case AFTER:
-                return cars.stream().filter(car -> car.getProductionYear() > year).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> manufacturer.getYear() > year).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
             case BEFORE_OR_EQUAL:
-                return cars.stream().filter(car -> car.getProductionYear() <= year).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> manufacturer.getYear() <= year).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
             case AFTER_OR_EQUAL:
-                return cars.stream().filter(car -> car.getProductionYear() >= year).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> manufacturer.getYear() >= year).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
             case EQUAL:
-                return cars.stream().filter(car -> car.getProductionYear().equals(year)).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> manufacturer.getYear().equals(year)).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
             case NOT_EQUAL:
-                return cars.stream().filter(car -> !car.getProductionYear().equals(year)).collect(Collectors.toList());
+                manufacturers.stream()
+                        .filter(manufacturer -> !manufacturer.getYear().equals(year)).collect(Collectors.toList())
+                        .forEach(manufacturer -> result.addAll(getCarsByManufacturer(manufacturer)));
+                break;
         }
 
-        return new ArrayList<>();
+        return result;
     }
 }

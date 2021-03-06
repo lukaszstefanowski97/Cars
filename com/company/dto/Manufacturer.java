@@ -1,14 +1,16 @@
 package com.company.dto;
 
+import com.company.enums.Country;
+
 import java.util.Objects;
 
 public class Manufacturer {
 
     String name;
     Integer year;
-    String country;
+    Country country;
 
-    public Manufacturer(String name, Integer year, String country) {
+    public Manufacturer(String name, Integer year, Country country) {
         this.name = name;
         this.year = year;
         this.country = country;
@@ -30,11 +32,11 @@ public class Manufacturer {
         this.year = year;
     }
 
-    public String getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
